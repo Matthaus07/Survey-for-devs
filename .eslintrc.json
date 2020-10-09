@@ -8,15 +8,6 @@
     "@typescript-eslint/strict-boolean-expression": "off",
     "quotes": [2, "single", {
       "avoidEscape": true
-    }],
-    "trailing-comma": [true, {
-      "singleline": "never",
-      "multiline": {
-        "objects": "always", // <==================
-        "arrays": "always",
-        "functions": "never",
-        "typeLiterals": "ignore"
-      }
     }]
   }
 }
