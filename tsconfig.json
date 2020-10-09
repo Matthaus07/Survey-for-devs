@@ -8,6 +8,12 @@
     "jsx": "react",
     "rootDir": "src",
     "baseUrl": "src",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["*"]
     },
@@ -15,5 +21,4 @@
     "resolveJsonModule": true
   },
   "include": ["src"],
-  "exclude": ["src/main/test/cypress"]
 }
