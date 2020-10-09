@@ -3,11 +3,17 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
+  "plugins": ["@typescript-eslint"],
+
   "rules": {
     "@typescript-eslint/consistent-type-definition": "off",
     "@typescript-eslint/strict-boolean-expression": "off",
     "quotes": [2, "single", {
       "avoidEscape": true
-    }]
+    }],
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars-experimental": "error",
+    "no-unused-vars": "off"
   }
 }
