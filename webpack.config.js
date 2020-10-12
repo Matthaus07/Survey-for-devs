@@ -1,47 +1,50 @@
 const path = require('path')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 module.exports = {
   mode: 'development',
-  entry: './src/',
+  entry: './src/main/index.tsx',
   output: {
-path: path.join(__dirname, 'public/js'),
-publicPath: '/public/js',
-filename:"bundle.js"
+    path: path.join(__dirname, 'public/js'),
+    publicPath: '/public/js',
+    filename: 'bundle.js',
   },
-  resolve:{
-    extensions: ['ts','.tsx','js','scss','css'],
-    alias:{
-      '@': path.join(__dirname, 'src')
-    }
-  },module:{
-    rules:[{
-      test: /\.ts(x?)$/, 
-      loader:'ts-loader',
-      exclude: /node_modules/},
-    {
-      test:/\.(s?)css$/,
-      use:[{
-        loader:'style-loader',
-      },{
-        loader:'css-loader',
-        options:{
-          modules:true
-        }
-      },{
-        loader:'sass-loader',
-      }]
-    }]
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', 'scss', 'css'],
+    alias: {
+      '@': path.join(__dirname, 'src'),
+    },
   },
-  devServer:{
+  module: {
+    rules: [
+      {
+        test: /\.ts(x?)$/,
+        loader: 'ts-loader',
+        exclude: /node-modules/,
+      },
+      {
+        test: /\.(s?)css$/,
+        use: [
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            },
+          },
+          { loader: 'sass-loader' },
+        ],
+      },
+    ],
+  },
+  devServer: {
     contentBase: './public',
     writeToDisk: true,
-    historyApiFallback:true
+    historyApiFallback: true,
+    port: 3000,
   },
-  externals:{
+  externals: {
     react: 'React',
-    'react-dom': 'ReactDOM'
+    'react-dom': 'ReactDOM',
   },
-  plugin:[
-    new CleanWebpackPlugin()
-  ]
+  plugins: [new CleanWebpackPlugin()],
 }
