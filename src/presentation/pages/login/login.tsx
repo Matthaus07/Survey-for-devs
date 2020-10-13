@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-
 import React, { useEffect, useState } from 'react'
 import Styles from '../login/login-styles.scss'
 import { Input, LoginHeader, Footer, FormStatus } from '@/presentation/components'
 import Context from '@/presentation/context/form/context-form'
 import { Validation } from '@/presentation/protocols'
+import { Authentication } from '@/domain/usecases'
 
 interface Props {
   validation: Validation
+  authentication: Authentication
 }
-const Login: React.FC<Props> = ({ validation }: Props) => {
+const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     email: '',
@@ -19,9 +20,13 @@ const Login: React.FC<Props> = ({ validation }: Props) => {
     mainError: ''
   })
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
     setState({ ...state, isLoading: true })
+    await authentication.auth({
+      email: state.email,
+      password: state.password
+    })
   }
 
   useEffect(() => {
