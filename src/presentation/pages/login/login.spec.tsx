@@ -1,7 +1,7 @@
 import React from 'react'
 import faker from 'faker'
 import Login from './login'
-import { render, RenderResult, cleanup } from '@testing-library/react'
+import { render, RenderResult, cleanup, fireEvent } from '@testing-library/react'
 import {
   ValidationStub,
   AuthenticationSpy,
@@ -115,5 +115,13 @@ describe('Login Component', () => {
     simulateValidSubmit(sut)
 
     expect(authenticationSpy.callsCount).toBe(1)
+  })
+
+  test('should not call authentication if form is invalid', () => {
+    const validationError = faker.random.words()
+    const { sut, authenticationSpy } = makeSut({ validationError })
+    populateEmailField(sut)
+    fireEvent.submit(sut.getByTestId('form'))
+    expect(authenticationSpy.callsCount).toBe(0)
   })
 })
