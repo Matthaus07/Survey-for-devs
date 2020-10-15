@@ -1,8 +1,14 @@
 import React from 'react'
 import faker from 'faker'
 import Login from './login'
-import { fireEvent, render, RenderResult, cleanup } from '@testing-library/react'
-import { ValidationStub, AuthenticationSpy } from '@/presentation/test'
+import { render, RenderResult, cleanup } from '@testing-library/react'
+import {
+  ValidationStub,
+  AuthenticationSpy,
+  populateEmailField,
+  populatePasswordField,
+  simulateValidSubmit
+} from '@/presentation/test'
 
 interface SutTypes {
   sut: RenderResult
@@ -11,23 +17,6 @@ interface SutTypes {
 
 interface SutParams {
   validationError: string
-}
-
-const simulateValidSubmit = (sut: RenderResult, email = faker.internet.email(), password = faker.internet.password()): void => {
-  populateEmailField(sut, email)
-  populatePasswordField(sut, password)
-  const submitButton = sut.getByTestId('submit')
-  fireEvent.click(submitButton)
-}
-
-const populateEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
-  const emailInput = sut.getByTestId('email')
-  fireEvent.input(emailInput, { target: { value: email } })
-}
-
-const populatePasswordField = (sut: RenderResult, password = faker.internet.password()): void => {
-  const passwordInput = sut.getByTestId('password')
-  fireEvent.input(passwordInput, { target: { value: password } })
 }
 
 const makeSut = (params?: SutParams): SutTypes => {
@@ -119,5 +108,12 @@ describe('Login Component', () => {
       email,
       password
     })
+  })
+  test('should call authentication only once', () => {
+    const { sut, authenticationSpy } = makeSut()
+    simulateValidSubmit(sut)
+    simulateValidSubmit(sut)
+
+    expect(authenticationSpy.callsCount).toBe(1)
   })
 })
