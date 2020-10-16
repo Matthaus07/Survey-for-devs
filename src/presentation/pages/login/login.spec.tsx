@@ -4,13 +4,17 @@ import Login from './login'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import 'jest-localstorage-mock'
-import { render, RenderResult, cleanup, fireEvent, waitFor } from '@testing-library/react'
+import { render, RenderResult, cleanup, fireEvent } from '@testing-library/react'
 import {
   ValidationStub,
   AuthenticationSpy,
-  populateEmailField,
-  populatePasswordField,
-  simulateValidSubmit
+  testEmailField,
+  testPasswordField,
+  simulateValidSubmit,
+  testErrorWrapChildCount,
+  testElementExists,
+  testElementText,
+  testButtonDisabled
 } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
 
@@ -44,20 +48,18 @@ describe('Login Component', () => {
   test('should start with initial state', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    const errorWrap = sut.getByTestId('error-wrap')
-    expect(errorWrap.childElementCount).toBe(0)
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(submitButton.disabled).toBe(true)
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe(validationError)
     const passwordStatus = sut.getByTestId('password-status')
     expect(passwordStatus.title).toBe(validationError)
+    testErrorWrapChildCount(sut, 0)
+    testButtonDisabled(sut, 'submit', true)
   })
 
   test('should show email error if validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    populateEmailField(sut)
+    testEmailField(sut)
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe(validationError)
   })
@@ -65,7 +67,7 @@ describe('Login Component', () => {
   test('should show password error if validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    populatePasswordField(sut)
+    testPasswordField(sut)
     const passwordStatus = sut.getByTestId('password-status')
     expect(passwordStatus.title).toBe(validationError)
   })
@@ -73,7 +75,7 @@ describe('Login Component', () => {
   test('should show valid password state if validation succeeds', () => {
     const { sut } = makeSut()
 
-    populatePasswordField(sut)
+    testPasswordField(sut)
     const passwordStatus = sut.getByTestId('password-status')
     expect(passwordStatus.title).toBe('ok')
   })
@@ -81,43 +83,40 @@ describe('Login Component', () => {
   test('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut()
 
-    populateEmailField(sut)
+    testEmailField(sut)
 
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe('ok')
   })
 
-  test('should enable submit button if form is valid', () => {
+  test('should enable submit button if form is valid', async () => {
     const { sut } = makeSut()
-    populateEmailField(sut)
-    populatePasswordField(sut)
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(submitButton.disabled).toBe(false)
+    await simulateValidSubmit(sut)
+    testButtonDisabled(sut, 'submit', false)
   })
 
-  test('should show spinner on submit', () => {
+  test('should show spinner on submit', async () => {
     const { sut } = makeSut()
-    simulateValidSubmit(sut)
-    const spinner = sut.getByTestId('spinner')
-    expect(spinner).toBeTruthy()
+    await simulateValidSubmit(sut)
+    testElementExists(sut, 'spinner')
   })
 
-  test('should call authentication with correct values', () => {
+  test('should call authentication with correct values', async () => {
     const { sut, authenticationSpy } = makeSut()
     const email = faker.internet.email()
     const password = faker.internet.password()
 
-    simulateValidSubmit(sut, email, password)
+    await simulateValidSubmit(sut, email, password)
 
     expect(authenticationSpy.params).toEqual({
       email,
       password
     })
   })
-  test('should call authentication only once', () => {
+  test('should call authentication only once', async () => {
     const { sut, authenticationSpy } = makeSut()
-    simulateValidSubmit(sut)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
 
     expect(authenticationSpy.callsCount).toBe(1)
   })
@@ -125,7 +124,7 @@ describe('Login Component', () => {
   test('should not call authentication if form is invalid', () => {
     const validationError = faker.random.words()
     const { sut, authenticationSpy } = makeSut({ validationError })
-    populateEmailField(sut)
+    testEmailField(sut)
     fireEvent.submit(sut.getByTestId('form'))
     expect(authenticationSpy.callsCount).toBe(0)
   })
@@ -134,18 +133,14 @@ describe('Login Component', () => {
     const { sut, authenticationSpy } = makeSut()
     const error = new InvalidCredentialsError()
     jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
-    simulateValidSubmit(sut)
-    const errorWrap = sut.getByTestId('error-wrap')
-    await waitFor(() => errorWrap)
-    const mainError = sut.getByTestId('main-error')
-    expect(mainError.textContent).toBe(error.message)
-    expect(errorWrap.childElementCount).toBe(1)
+    await simulateValidSubmit(sut)
+    testElementText(sut, 'main-error', error.message)
+    testErrorWrapChildCount(sut, 1)
   })
 
   test('should add accessToken to localstorage on success', async () => {
     const { sut, authenticationSpy } = makeSut()
-    simulateValidSubmit(sut)
-    await waitFor(() => sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
