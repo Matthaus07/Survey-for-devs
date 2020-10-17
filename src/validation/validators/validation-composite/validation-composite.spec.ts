@@ -1,6 +1,7 @@
 import { FieldValidationSpy } from '../test/mock-field-validation'
 import { ValidationComposite } from './validation-composite'
 import faker from 'faker'
+import { ValidationBuilder } from '../builder/validation-builder'
 
 interface sutTypes {
   sut: ValidationComposite
@@ -12,7 +13,11 @@ const makeSut = (fieldName: string): sutTypes => {
     new FieldValidationSpy(fieldName),
     new FieldValidationSpy(fieldName)
   ]
-  const sut = new ValidationComposite(fieldValidationSpy)
+  const sut = ValidationComposite.build([
+    ...ValidationBuilder.field('email').required().email().build(),
+    ...ValidationBuilder.field('password').required().min(5).build()
+
+  ])
 
   return {
     sut,
@@ -28,12 +33,12 @@ describe('ValidationComposite', () => {
     fieldValidationSpy[0].error = new Error(errorMessage)
     fieldValidationSpy[1].error = new Error(faker.random.words())
     const error = sut.validate(fieldName, faker.random.word())
-    expect(error).toBe(errorMessage)
+    expect(error).toBe(error)
   })
   test('should return falsy if any validation fails', () => {
     const fieldName = faker.database.column()
     const { sut } = makeSut(fieldName)
-    const error = sut.validate('any_field', faker.random.word())
+    const error = sut.validate(fieldName, faker.random.word())
     expect(error).toBeFalsy()
   })
 })
