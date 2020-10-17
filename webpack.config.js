@@ -47,6 +47,6 @@ module.exports = {
     'react-dom': 'ReactDOM',
   },
   plugins: [new CleanWebpackPlugin(), new DefinePlugin({
-    'process.env.API_URL':'http://fordevs.herokuapp.com/api'
+    'process.env.API_URL':''
   })],
 }
