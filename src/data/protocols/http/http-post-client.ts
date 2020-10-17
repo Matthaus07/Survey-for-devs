@@ -5,5 +5,5 @@ export interface HttpPostParams<Type> {
   body?: Type
 }
 export interface HttpPostClient<Type, Response> {
-  post(params: HttpPostParams<Type>): Promise<HttpResponse<Response>>
+  post: (params: HttpPostParams<Type>) => Promise<HttpResponse<Response>>
 }
