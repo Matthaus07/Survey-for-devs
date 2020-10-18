@@ -19,6 +19,6 @@ jobs:
             - ~/.cache
       - run: npm run test
       - run: npm-check -u -s
-      - run: npm test -- --coverage
+      - run: npm run test:ci
 
      
