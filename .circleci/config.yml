@@ -36,6 +36,8 @@ jobs:
            - v1-dependencies-
 
       - run: npm run test
+      - run: npm run test:ci
+
 workflows:
   version: 2.1
   build-and-deploy-on-hold:
