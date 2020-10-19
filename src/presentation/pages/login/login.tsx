@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { Authentication } from '@/domain/usecases'
+import { Authentication,SaveAccessToken } from '@/domain/usecases'
 import { Validation } from '@/presentation/protocols'
 import { Input, LoginHeader, Footer, FormStatus } from '@/presentation/components'
 import Context from '@/presentation/context/form/context-form'
@@ -10,8 +10,9 @@ import Styles from '../login/login-styles.scss'
 interface Props {
   validation: Validation
   authentication: Authentication
+  saveAccessToken: SaveAccessToken
 }
-const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
+const Login: React.FC<Props> = ({ validation, authentication,saveAccessToken }: Props) => {
   const history = useHistory()
   const [state, setState] = useState({
     isLoading: false,
@@ -33,7 +34,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
         password: state.password
       })
 
-      localStorage.setItem('accessToken', account.accessToken)
+      await saveAccessToken.save(account.accessToken)
       history.replace('/')
     } catch (error) {
       setState({ ...state, isLoading: false, mainError: error.message })
