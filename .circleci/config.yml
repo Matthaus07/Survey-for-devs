@@ -6,18 +6,52 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+     
       - restore_cache:
          keys:
            - v1-dependencies-{{ checksum "package.json" }}
            - v1-dependencies-
+    
       - run: npm install
+
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
             - ~/.npm 
             - ~/.cache
-      - run: npm run test
-      - run: npm run test:ci
-
      
+  test:
+    docker:
+      - image: circleci/node:12.18.1 
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+         keys:
+           - v1-dependencies-{{ checksum "package.json" }}
+           - v1-dependencies-
+
+      - run: npm run test
+workflows:
+  version: 2.1
+  build-and-deploy-on-hold:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - feat/ci
+                - main
+
+      - test:
+          requires:
+            - build
+
+      - hold:
+          type: approval
+          requires:
+            - test
