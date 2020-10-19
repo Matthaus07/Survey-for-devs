@@ -6,12 +6,8 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-<<<<<<< HEAD
-      - restore_cach  e:
-=======
-     
+      
       - restore_cache:
->>>>>>> feat/ci
          keys:
            - v1-dependencies-{{ checksum "package.json" }}
            - v1-dependencies-
