@@ -1,14 +1,14 @@
 import faker from 'faker'
-import { SetStorageSpy } from '@/data/test/mock-storage'
+import { SetStorageMock } from '@/data/test/mock-storage'
 import { LocalSaveAccessToken } from './local-save-access-token'
 
 interface SutTypes{
   sut: LocalSaveAccessToken
-  setStorageSpy: SetStorageSpy
+  setStorageSpy: SetStorageMock
 }
 
 const makeSut = (): SutTypes => {
-  const setStorageSpy = new SetStorageSpy()
+  const setStorageSpy = new SetStorageMock()
   const sut = new LocalSaveAccessToken(setStorageSpy)
   return { sut,setStorageSpy }
 }
