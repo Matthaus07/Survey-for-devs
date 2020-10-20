@@ -27,6 +27,6 @@ describe('AddAccount', () => {
     const mockAccount = mockAddAccount()
     const { sut, httpPostClientSpy } = makeSut()
     await sut.add(mockAccount)
-    expect(httpPostClientSpy.body).toBe(mockAccount)
+    expect(httpPostClientSpy.body).toEqual(mockAccount)
   })
 })
