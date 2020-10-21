@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
 import { RequiredFieldError } from '@/validation/error'
 import { FieldValidation } from '../../protocols/field-validation'
