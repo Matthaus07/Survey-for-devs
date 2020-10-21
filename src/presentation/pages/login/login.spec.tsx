@@ -9,13 +9,12 @@ import {
   ValidationStub,
   AuthenticationSpy,
   SaveAccessTokenMock,
-  populateEmailField,
-  testPasswordField,
   simulateValidSubmit,
   testErrorWrapChildCount,
   testElementExists,
   testElementText,
-  testButtonDisabled
+  testButtonDisabled,
+  populateField
 } from '@/presentation/test'
 
 import { InvalidCredentialsError } from '@/domain/errors'
@@ -68,7 +67,7 @@ describe('Login Component', () => {
   test('should show email error if validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    populateEmailField(sut,'email')
+    populateField(sut,'email')
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe(validationError)
   })
@@ -76,7 +75,7 @@ describe('Login Component', () => {
   test('should show password error if validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    testPasswordField(sut)
+    populateField(sut,'password')
     const passwordStatus = sut.getByTestId('password-status')
     expect(passwordStatus.title).toBe(validationError)
   })
@@ -84,7 +83,7 @@ describe('Login Component', () => {
   test('should show valid password state if validation succeeds', () => {
     const { sut } = makeSut()
 
-    testPasswordField(sut)
+    populateField(sut,'password')
     const passwordStatus = sut.getByTestId('password-status')
     expect(passwordStatus.title).toBe('ok')
   })
@@ -92,7 +91,7 @@ describe('Login Component', () => {
   test('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut()
 
-    populateEmailField(sut)
+    populateField(sut,'email')
 
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe('ok')
@@ -133,7 +132,7 @@ describe('Login Component', () => {
   test('should not call authentication if form is invalid', () => {
     const validationError = faker.random.words()
     const { sut, authenticationSpy } = makeSut({ validationError })
-    populateEmailField(sut)
+    populateField(sut,'email')
     fireEvent.submit(sut.getByTestId('form'))
     expect(authenticationSpy.callsCount).toBe(0)
   })
