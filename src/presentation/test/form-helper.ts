@@ -3,16 +3,21 @@ import { fireEvent, RenderResult, waitFor } from '@testing-library/react'
 import faker from 'faker'
 
 export const simulateValidSubmit = async (sut: RenderResult, email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
-  testEmailField(sut, email)
+  populateEmailField(sut, email)
   testPasswordField(sut, password)
   const form = sut.getByTestId('form')
   fireEvent.submit(form)
   await waitFor(() => form)
 }
 
-export const testEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
+export const populateEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
   const emailInput = sut.getByTestId('email')
   fireEvent.input(emailInput, { target: { value: email } })
+}
+
+export const populateField = (sut: RenderResult,fieldName: string, value = faker.random.word()): void => {
+  const emailInput = sut.getByTestId(fieldName)
+  fireEvent.input(emailInput, { target: { value: value } })
 }
 
 export const testPasswordField = (sut: RenderResult, password = faker.internet.password()): void => {

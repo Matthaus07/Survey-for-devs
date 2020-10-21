@@ -8,8 +8,8 @@ import { render, RenderResult, cleanup, fireEvent } from '@testing-library/react
 import {
   ValidationStub,
   AuthenticationSpy,
-  SaveAccessTokenMock
-  ,testEmailField,
+  SaveAccessTokenMock,
+  populateEmailField,
   testPasswordField,
   simulateValidSubmit,
   testErrorWrapChildCount,
@@ -68,7 +68,7 @@ describe('Login Component', () => {
   test('should show email error if validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    testEmailField(sut)
+    populateEmailField(sut,'email')
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe(validationError)
   })
@@ -92,7 +92,7 @@ describe('Login Component', () => {
   test('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut()
 
-    testEmailField(sut)
+    populateEmailField(sut)
 
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe('ok')
@@ -133,7 +133,7 @@ describe('Login Component', () => {
   test('should not call authentication if form is invalid', () => {
     const validationError = faker.random.words()
     const { sut, authenticationSpy } = makeSut({ validationError })
-    testEmailField(sut)
+    populateEmailField(sut)
     fireEvent.submit(sut.getByTestId('form'))
     expect(authenticationSpy.callsCount).toBe(0)
   })

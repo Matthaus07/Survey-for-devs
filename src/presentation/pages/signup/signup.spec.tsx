@@ -1,14 +1,22 @@
 import React from 'react'
+import faker from 'faker'
 import { RenderResult, render,cleanup } from '@testing-library/react'
-import { testStatusForField,testChildCount, testButtonDisabled } from '@/presentation/test'
+import { testStatusForField,testChildCount, testButtonDisabled, ValidationStub, populateField } from '@/presentation/test'
 import SignUp from './signup'
 
 interface SutTypes {
   sut: RenderResult
 }
-const makeSut = (): SutTypes => {
+
+interface SutParams {
+  validationError: string
+}
+
+const makeSut = (params?: SutParams): SutTypes => {
+  const validationStub = new ValidationStub()
+  validationStub.errorMessage = params?.validationError
   const sut = render(
-    <SignUp/>
+    <SignUp validation={validationStub}/>
   )
 
   return { sut }
@@ -17,13 +25,20 @@ const makeSut = (): SutTypes => {
 describe('SignUp test Component', () => {
   afterEach(cleanup)
   test('should start with initial state', () => {
-    const validationError = 'Campo obrigatório'
-    const { sut } = makeSut()
+    const validationError = faker.random.words()
+    const { sut } = makeSut({ validationError })
     testChildCount(sut, 'error-wrap',0)
     testButtonDisabled(sut, 'submit', true)
     testStatusForField(sut, 'name', validationError)
-    testStatusForField(sut, 'email', validationError)
-    testStatusForField(sut, 'password', validationError)
-    testStatusForField(sut, 'passwordConfirmation', validationError)
+    testStatusForField(sut, 'email', 'Campo obrigatório')
+    testStatusForField(sut, 'password', 'Campo obrigatório')
+    testStatusForField(sut, 'passwordConfirmation', 'Campo obrigatório')
+  })
+
+  test('should show name error if validation fails', () => {
+    const validationError = faker.random.words()
+    const { sut } = makeSut({ validationError })
+    populateField(sut,'name')
+    testStatusForField(sut, 'name',validationError)
   })
 })
