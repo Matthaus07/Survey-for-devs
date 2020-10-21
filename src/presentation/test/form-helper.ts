@@ -25,17 +25,12 @@ export const testErrorWrapChildCount = (sut: RenderResult, count: number): void 
   expect(errorWrap.childElementCount).toBe(count)
 }
 
-export const testElementExists = (sut: RenderResult, fieldName: string): void => {
-  const element = sut.getByTestId(fieldName)
-  expect(element).toBeTruthy()
+export const testStatusForField = (sut: RenderResult, fieldName: string, ValidationError: string): void => {
+  const fieldStatus = sut.getByTestId(`${fieldName}-status`)
+  expect(fieldStatus.title).toBe(ValidationError || 'tudo certo')
 }
 
-export const testElementText = (sut: RenderResult, fieldName: string, textMessageError: string): void => {
+export const testChildCount = (sut: RenderResult, fieldName: string, count: number): void => {
   const element = sut.getByTestId(fieldName)
-  expect(element.textContent).toBe(textMessageError)
-}
-
-export const testButtonDisabled = (sut: RenderResult, fieldName: string, isDisabled: boolean): void => {
-  const button = sut.getByTestId(fieldName) as HTMLButtonElement
-  expect(button.disabled).toBe(isDisabled)
+  expect(element.childElementCount).toBe(count)
 }
