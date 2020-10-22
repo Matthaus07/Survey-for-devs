@@ -4,12 +4,11 @@ import { Login } from '@/presentation/pages'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import 'jest-localstorage-mock'
-import { render, RenderResult, cleanup, fireEvent } from '@testing-library/react'
+import { render, RenderResult, cleanup, fireEvent, waitFor } from '@testing-library/react'
 import {
   ValidationStub,
   AuthenticationSpy,
   SaveAccessTokenMock,
-  simulateValidSubmit,
   testErrorWrapChildCount,
   testElementExists,
   testElementText,
@@ -48,6 +47,14 @@ const makeSut = (params?: SutParams): SutTypes => {
     authenticationSpy,
     saveAccessTokenMock
   }
+}
+
+const simulateValidSubmit = async (sut: RenderResult, email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
+  populateField(sut,'email', email)
+  populateField(sut,'password', password)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 describe('Login Component', () => {
