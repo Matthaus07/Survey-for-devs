@@ -7,17 +7,18 @@ import { Validation } from '@/presentation/protocols'
 interface Props {
   validation: Validation
 }
+
 const SignUp: React.FC<Props> = ({ validation }: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     name: '',
     email: '',
     password: '',
-    nameError: '',
     passwordConfirmation: '',
-    emailError: 'Campo obrigatório',
-    passwordError: 'Campo obrigatório',
-    passwordConfirmationError: 'Campo obrigatório',
+    nameError: '',
+    emailError: '',
+    passwordError: '',
+    passwordConfirmationError: '',
     mainError: ''
   })
 
@@ -29,7 +30,7 @@ const SignUp: React.FC<Props> = ({ validation }: Props) => {
       passwordError: validation.validate('password', state.password),
       passwordConfirmationError: validation.validate('passwordConfirmation', state.passwordConfirmation)
     })
-  }, [state.name, state.email, state.password])
+  }, [state.name, state.email, state.password, state.passwordConfirmation])
   return (
     <div className={Styles.signup}>
       <LoginHeader/>
@@ -42,7 +43,7 @@ const SignUp: React.FC<Props> = ({ validation }: Props) => {
           <Input type="password" name="password" placeholder="Digite sua senha"/>
           <Input type="password" name="passwordConfirmation" placeholder="Confirme sua senha"/>
 
-          <button data-testid="submit" disabled className={Styles.submit} type="submit" >Criar Conta</button>
+          <button data-testid="submit" disabled={ !!state.nameError || !!state.emailError || !!state.passwordError || !!state.passwordConfirmationError} className={Styles.submit} type="submit" >Criar Conta</button>
           <span className={Styles.link}>Voltar para o Login</span>
 
           <FormStatus />
