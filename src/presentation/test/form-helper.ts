@@ -20,9 +20,9 @@ export const testErrorWrapChildCount = (sut: RenderResult, count: number): void 
   expect(errorWrap.childElementCount).toBe(count)
 }
 
-export const testStatusForField = (sut: RenderResult, fieldName: string, ValidationError: string): void => {
+export const testStatusForField = (sut: RenderResult, fieldName: string, ValidationError?: string): void => {
   const fieldStatus = sut.getByTestId(`${fieldName}-status`)
-  expect(fieldStatus.title).toBe(ValidationError || 'tudo certo')
+  expect(fieldStatus.title).toBe(ValidationError || 'ok')
 }
 
 export const testChildCount = (sut: RenderResult, fieldName: string, count: number): void => {
