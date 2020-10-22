@@ -3,9 +3,10 @@ import faker from 'faker'
 import { RenderResult, render,cleanup, waitFor, fireEvent } from '@testing-library/react'
 import {
   testStatusForField,testChildCount, testButtonDisabled,
-  ValidationStub, populateField, testElementExists,AddAccountSpy
+  ValidationStub, populateField, testElementExists,AddAccountSpy, testErrorWrapChildCount, testElementText
 } from '@/presentation/test'
 import SignUp from './signup'
+import { EmailAlreadyInUse } from '@/domain/errors'
 
 interface SutTypes {
   sut: RenderResult
@@ -131,11 +132,27 @@ describe('SignUp test Component', () => {
       passwordConfirmation: password
     })
   })
-  test('should call authentication only once', async () => {
+  test('should call addAccount only once', async () => {
     const { sut, addAccountSpy } = makeSut()
     await simulateValidSubmit(sut)
     await simulateValidSubmit(sut)
 
     expect(addAccountSpy.callsCount).toBe(1)
+  })
+
+  test('should not call authentication if form is invalid',async () => {
+    const validationError = faker.random.words()
+    const { sut, addAccountSpy } = makeSut({ validationError })
+    await simulateValidSubmit(sut)
+    fireEvent.submit(sut.getByTestId('form'))
+    expect(addAccountSpy.callsCount).toBe(0)
+  })
+  test('should present error if AddAccount fails', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    const error = new EmailAlreadyInUse()
+    jest.spyOn(addAccountSpy, 'add').mockRejectedValueOnce(error)
+    await simulateValidSubmit(sut)
+    testElementText(sut, 'main-error', error.message)
+    testErrorWrapChildCount(sut, 1)
   })
 })
