@@ -1,9 +1,12 @@
 import React from 'react'
 import faker from 'faker'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+
 import { RenderResult, render,cleanup, waitFor, fireEvent } from '@testing-library/react'
 import {
   testStatusForField,testChildCount, testButtonDisabled,
-  ValidationStub, populateField, testElementExists,AddAccountSpy, testErrorWrapChildCount, testElementText
+  ValidationStub, populateField, testElementExists,AddAccountSpy, testErrorWrapChildCount, testElementText, SaveAccessTokenMock
 } from '@/presentation/test'
 import SignUp from './signup'
 import { EmailAlreadyInUse } from '@/domain/errors'
@@ -11,21 +14,27 @@ import { EmailAlreadyInUse } from '@/domain/errors'
 interface SutTypes {
   sut: RenderResult
   addAccountSpy: AddAccountSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 
 interface SutParams {
   validationError: string
 }
+const history = createMemoryHistory({ initialEntries: ['/signup'] })
 
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   const addAccountSpy = new AddAccountSpy()
+  const saveAccessTokenMock = new SaveAccessTokenMock()
   validationStub.errorMessage = params?.validationError
   const sut = render(
-    <SignUp validation={validationStub} addAccount={addAccountSpy}/>
+    <Router history={history}>
+
+      <SignUp validation={validationStub} addAccount={addAccountSpy} saveAccessToken={saveAccessTokenMock}/>
+    </Router>
   )
 
-  return { sut,addAccountSpy }
+  return { sut,addAccountSpy,saveAccessTokenMock }
 }
 
 const simulateValidSubmit = async (sut: RenderResult, name = faker.name.findName(), email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
@@ -154,5 +163,29 @@ describe('SignUp test Component', () => {
     await simulateValidSubmit(sut)
     testElementText(sut, 'main-error', error.message)
     testErrorWrapChildCount(sut, 1)
+  })
+
+  test('should add accessToken to localstorage on success', async () => {
+    const { sut, addAccountSpy,saveAccessTokenMock } = makeSut()
+    await simulateValidSubmit(sut)
+    expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/')
+  })
+
+  test('should add accessToken to localstorage on success', async () => {
+    const { sut, addAccountSpy,saveAccessTokenMock } = makeSut()
+    await simulateValidSubmit(sut)
+    expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/')
+  })
+
+  test('sould go login page', () => {
+    const { sut } = makeSut()
+    const loginLink = sut.getByTestId('login-link')
+    fireEvent.click(loginLink)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/login')
   })
 })
