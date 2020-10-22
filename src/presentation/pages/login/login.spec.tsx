@@ -99,7 +99,9 @@ describe('Login Component', () => {
 
   test('should enable submit button if form is valid', async () => {
     const { sut } = makeSut()
-    await simulateValidSubmit(sut)
+    populateField(sut, 'email')
+    populateField(sut, 'password')
+
     testButtonDisabled(sut, 'submit', false)
   })
 

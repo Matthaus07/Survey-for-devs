@@ -86,4 +86,13 @@ describe('SignUp test Component', () => {
     populateField(sut, 'passwordConfirmation')
     testStatusForField(sut, 'passwordConfirmation')
   })
+
+  test('should show submit button form is valid', () => {
+    const { sut } = makeSut()
+    populateField(sut, 'name')
+    populateField(sut, 'email')
+    populateField(sut, 'password')
+    populateField(sut, 'passwordConfirmation')
+    testButtonDisabled(sut, 'submit', false)
+  })
 })
