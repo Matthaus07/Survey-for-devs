@@ -28,8 +28,8 @@ export class ValidationBuilder {
     return this
   }
 
-  sameAs (field: string): ValidationBuilder {
-    this.validations.push(new CompareFieldValidation(this.fieldName, field))
+  sameAs (compareField: string): ValidationBuilder {
+    this.validations.push(new CompareFieldValidation(this.fieldName, compareField))
     return this
   }
 
