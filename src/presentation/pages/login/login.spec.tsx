@@ -4,12 +4,11 @@ import { Login } from '@/presentation/pages'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import 'jest-localstorage-mock'
-import { render, RenderResult, cleanup, fireEvent } from '@testing-library/react'
+import { render, RenderResult, cleanup, fireEvent, waitFor } from '@testing-library/react'
 import {
   ValidationStub,
   AuthenticationSpy,
   SaveAccessTokenMock,
-  simulateValidSubmit,
   testErrorWrapChildCount,
   testElementExists,
   testElementText,
@@ -48,6 +47,14 @@ const makeSut = (params?: SutParams): SutTypes => {
     authenticationSpy,
     saveAccessTokenMock
   }
+}
+
+const simulateValidSubmit = async (sut: RenderResult, email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
+  populateField(sut,'email', email)
+  populateField(sut,'password', password)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 describe('Login Component', () => {
@@ -99,7 +106,9 @@ describe('Login Component', () => {
 
   test('should enable submit button if form is valid', async () => {
     const { sut } = makeSut()
-    await simulateValidSubmit(sut)
+    populateField(sut, 'email')
+    populateField(sut, 'password')
+
     testButtonDisabled(sut, 'submit', false)
   })
 
@@ -140,7 +149,7 @@ describe('Login Component', () => {
   test('should present error if Authentication fails', async () => {
     const { sut, authenticationSpy } = makeSut()
     const error = new InvalidCredentialsError()
-    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
+    jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
     await simulateValidSubmit(sut)
     testElementText(sut, 'main-error', error.message)
     testErrorWrapChildCount(sut, 1)
