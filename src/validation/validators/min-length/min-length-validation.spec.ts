@@ -8,7 +8,7 @@ describe('MinLengthValidation', () => {
     const field = faker.database.column()
     const sut = makeSut(field)
     const error = sut.validate({ [field]: faker.random.alphaNumeric(4) })
-    expect(error).toEqual(new InvalidFieldError())
+    expect(error).toEqual(new InvalidFieldError('senha'))
   })
 
   test('should return falsy if value is invalid', () => {

@@ -14,9 +14,9 @@ describe('Login', () => {
 
   it('Should present error state if form is valid', () => {
     cy.getByTestId('email').focus().type(faker.random.word())
-    cy.getByTestId('email-status').should('have.attr','title', 'O campo Email É inválido!')
+    cy.getByTestId('email-status').should('have.attr','title', 'O campo email É inválido!')
     cy.getByTestId('password').focus().type(faker.random.alphaNumeric(3))
-    cy.getByTestId('password-status').should('have.attr','title','O campo Senha É inválido!')
+    cy.getByTestId('password-status').should('have.attr','title','O campo senha É inválido!')
     cy.getByTestId('submit').should('have.attr','disabled')
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
