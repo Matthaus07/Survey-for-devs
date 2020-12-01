@@ -1,36 +1,36 @@
-{
-  "settings": {
-    "react":{
-      "version": "detect"
-    }
-  },
-  "extends":[ 
-    "standard-with-typescript", 
-    "plugin:react/recommended",
-    "plugin:cypress/recommended"
-  ],
-  "parserOptions": {
-    "project": "./tsconfig-eslint.json"
-  },
-  "plugins": ["@typescript-eslint","react","cypress"],
+  {
+    "settings": {
+      "react":{
+        "version": "detect"
+      }
+    },
+    "extends":[ 
+      "standard-with-typescript", 
+      "plugin:react/recommended",
+      "plugin:cypress/recommended"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig-eslint.json"
+    },
+    "plugins": ["@typescript-eslint","react","cypress"],
 
-  "rules": {
-    "@typescript-eslint/consistent-type-definition": "off",
-    "@typescript-eslint/strict-boolean-expressions": ["off", { "allowNullable": false, "ignoreRhs": true
+    "rules": {
+      "@typescript-eslint/consistent-type-definition": "off",
+      "@typescript-eslint/strict-boolean-expressions": ["off", { "allowNullable": false, "ignoreRhs": true
+        }],
+      "quotes": [2, "single", {
+        "avoidEscape": true
       }],
-    "quotes": [2, "single", {
-      "avoidEscape": true
-    }],
-    "@typescript-eslint/no-floating-promises": "off",
-    "@typescript-eslint/comma-spacing": "off",
-    "@typescript-eslint/return-await": "off",
-    "@typescript-eslint/no-namespace": "off",
-    "no-redeclare": "off",
-    "import/export": "off",
-    "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars":"error"
- 
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/comma-spacing": "off",
+      "@typescript-eslint/return-await": "off",
+      "@typescript-eslint/no-namespace": "off",
+      "no-redeclare": "off",
+      "import/export": "off",
+      "@typescript-eslint/camelcase": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "react/jsx-uses-react": "error",
+      "react/jsx-uses-vars":"error"
+  
+    }
   }
-}
