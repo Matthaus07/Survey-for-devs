@@ -178,6 +178,6 @@ describe('Login Component', () => {
     fireEvent.click(register)
 
     expect(history.length).toBe(2)
-    expect(history.location.pathname).toBe('/signup')
+    expect(history.location.pathname).toBe('/cadastro-admin')
   })
 })
